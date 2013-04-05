@@ -13,7 +13,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 file_path = os.path.join(main_dir,
                                  'tone.wav')
 
-mixer.init(8000, 16, 1, 8192)
+mixer.init(44100, -16, 1, 8192)
 sound = mixer.Sound(file_path)
 channel = sound.play()
 
