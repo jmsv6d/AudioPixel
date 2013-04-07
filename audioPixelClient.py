@@ -3,26 +3,19 @@ import pygame.mixer, pygame.time
 mixer = pygame.mixer
 time = pygame.time
 
-IP = '127.0.0.1'
-PORT = 8800
-BUFFER_SIZE = 1024
-PIXEL_ID = 1
+GROUP_IP = '192.168.0.22'
+PORT = 8002
+BUFFER_SIZE = 38000
+PIXEL_ID = 2
 
-main_dir = os.path.split(os.path.abspath(__file__))[0]
+mixer.init(44100, -16, 1, 1024)
+channel = mixer.find_channel()
 
-file_path = os.path.join(main_dir,
-                                 'tone.wav')
-
-mixer.init(44100, -16, 1, 8192)
-sound = mixer.Sound(file_path)
-channel = sound.play()
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((IP, PORT))
-sock.send(str(PIXEL_ID))
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((GROUP_IP, PORT))
 
 while True:
-	data = sock.recv(BUFFER_SIZE)
+	data, addr = sock.recvfrom(BUFFER_SIZE)
 	s = mixer.Sound(data)
-	channel.play(s)
-
+	channel.queue(s)
+	
